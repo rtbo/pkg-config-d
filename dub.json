@@ -1,0 +1,9 @@
+{
+	"name": "pkg-config",
+	"authors": [
+		"Remi Thebault"
+	],
+	"description": "Wraps invocation to pkg-config for build scripts",
+	"copyright": "Copyright © 2018, Remi Thebault",
+	"license": "MIT"
+}
