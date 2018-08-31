@@ -8,30 +8,33 @@ auto pkgConfig(in string lib, in string minVersion=null)
     return pc;
 }
 
-bool pkgConfigDubLines(in string lib, in string minVersion=null)
-{
-    try {
-        auto pc = pkgConfig(lib, minVersion)
-            .libs();
-        version(Windows) {
-            pc = pc.msvc();
+version (DubPR1453) {
+
+    bool pkgConfigDubLines(in string lib, in string minVersion=null)
+    {
+        try {
+            auto pc = pkgConfig(lib, minVersion)
+                .libs()
+                .msvc();
+            auto library = pc.invoke();
+            library.echoDubLines();
+            return true;
         }
-        auto library = pc.invoke();
-        library.echoDubLines();
-        return true;
+        catch (Exception ex) {
+            import std.stdio : stderr;
+            stderr.writeln(ex.msg);
+            return false;
+        }
     }
-    catch (Exception ex) {
-        import std.stdio : stderr;
-        stderr.writeln(ex.msg);
-        return false;
+
+    version(linux) unittest {
+        import std.exception : assertNotThrown;
+        assert(pkgConfigDubLines("libpng", "1.6.0"));
+        assert(!pkgConfigDubLines("libpng", "99.0"));
     }
+
 }
 
-version(linux) unittest {
-    import std.exception : assertNotThrown;
-    assert(pkgConfigDubLines("libpng", "1.6.0"));
-    assert(!pkgConfigDubLines("libpng", "2.0"));
-}
 
 class LibraryNotFound : Exception {
     this (string msg) {
@@ -52,7 +55,7 @@ struct Library
     string[] libs;
     string[] otherLFlags;
 
-    void echoDubLines(File f=stdout)
+    version (DubPR1453) void echoDubLines(File f=stdout)
     {
         import std.algorithm : map;
         import std.array : join;
