@@ -46,13 +46,25 @@ struct Library
 {
     import std.stdio : File, stdout;
 
+    /// the name of the library
     string name;
+    /// the version of the library
     string ver;
+    /// all C flags verbatim
+    string[] cflags;
+    /// include paths to look for headers
     string[] includePaths;
+    /// preprocessor definitions
     string[] defines;
+    /// C flags that are not include paths or defines
     string[] otherCFlags;
+    /// all link flags verbatim
+    string[] lflags;
+    /// libraries search paths
     string[] libPaths;
+    /// libraries to link
     string[] libs;
+    /// other link flags that are not searchs path and not libraries
     string[] otherLFlags;
 
     version (DubPR1453) void echoDubLines(File f=stdout)
@@ -84,6 +96,8 @@ struct Library
 
         const flags = splitFlags(flagStr);
 
+        cflags ~= flags;
+
         foreach (f; flags) {
             if (f.startsWith("-I")) {
                 includePaths ~= f[2 .. $];
@@ -102,6 +116,8 @@ struct Library
         import std.algorithm : startsWith;
 
         const flags = splitFlags(flagStr);
+
+        lflags ~= flags;
 
         foreach (f; flags) {
             if (f.startsWith("-L")) {
