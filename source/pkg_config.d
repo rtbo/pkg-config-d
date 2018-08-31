@@ -157,8 +157,10 @@ struct PkgConfig
         _static = true;
         return this;
     }
-    version(Windows) PkgConfig msvc() {
-        _msvc = true;
+    PkgConfig msvc() {
+        version(Windows) {
+            _msvc = true;
+        }
         return this;
     }
 
